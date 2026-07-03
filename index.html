@@ -14,6 +14,7 @@
             --primary-navy: #020a13;
             --secondary-navy: #05162d;
             --accent-blue: #4a90e2;
+            --accent-cyan: #5ee6d8;
             --ice-white: #f8fafc;
             --text-dim: #94a3b8;
             --glass-bg: rgba(255, 255, 255, 0.03);
@@ -29,6 +30,33 @@
             color: var(--ice-white);
             line-height: 1.7;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient background */
+        .ambient-glow {
+            position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+        }
+        .ambient-glow span {
+            position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.28;
+        }
+        .ambient-glow span:nth-child(1) { width: 500px; height: 500px; background: var(--accent-blue); top: -150px; left: -100px; animation: drift1 22s ease-in-out infinite alternate; }
+        .ambient-glow span:nth-child(2) { width: 420px; height: 420px; background: var(--accent-cyan); bottom: 10%; right: -120px; animation: drift2 26s ease-in-out infinite alternate; }
+        .ambient-glow span:nth-child(3) { width: 380px; height: 380px; background: #6a5cff; top: 45%; left: 40%; opacity: 0.16; animation: drift1 30s ease-in-out infinite alternate-reverse; }
+        .grid-overlay {
+            position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 90%);
+        }
+        @keyframes drift1 { from { transform: translate(0,0) scale(1); } to { transform: translate(60px, 80px) scale(1.15); } }
+        @keyframes drift2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-50px, -60px) scale(1.1); } }
+
+        /* Scroll progress */
+        #scroll-progress {
+            position: fixed; top: 0; left: 0; height: 3px; width: 0%; z-index: 10002;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+            transition: width 0.1s linear;
         }
 
         /* Custom Cursor */
@@ -59,14 +87,32 @@
         /* Hero */
         .hero { min-height: 100vh; display: flex; align-items: center; padding-top: 80px; }
         .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+        .eyebrow { display: inline-flex; align-items: center; gap: 10px; background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 8px 18px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent-blue); margin-bottom: 22px; }
+        .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); animation: pulse 1.8s ease-in-out infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.75); } }
         .hero-title { font-size: clamp(3rem, 7vw, 6rem); font-weight: 800; line-height: 0.9; margin-bottom: 25px; }
+        .gradient-text { background: linear-gradient(120deg, var(--accent-blue), var(--accent-cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .stroke-text { color: transparent; -webkit-text-stroke: 1.5px rgba(255,255,255,0.4); }
-        
+
+        .hero-stats { display: flex; gap: 40px; margin-top: 40px; }
+        .hero-stat .num { font-family: 'Space Grotesk'; font-size: 1.8rem; font-weight: 700; color: #fff; }
+        .hero-stat .label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
         .profile-frame {
             width: 100%; max-width: 480px; aspect-ratio: 0.8; border-radius: 30px; 
             overflow: hidden; border: 1px solid var(--glass-border); position: relative;
+            box-shadow: 0 30px 80px -20px rgba(74, 144, 226, 0.35);
+        }
+        .profile-frame::after {
+            content: ''; position: absolute; inset: 0; border-radius: 30px; padding: 1px;
+            background: linear-gradient(160deg, rgba(74,144,226,0.6), transparent 40%, rgba(94,230,216,0.4));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
         }
         .profile-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        .interest-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+        .interest-tag { font-size: 0.8rem; padding: 8px 16px; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-dim); }
 
         /* Section Styling */
         .section-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 40px; position: relative; display: inline-block; }
@@ -137,6 +183,10 @@
 </head>
 <body>
 
+    <div class="ambient-glow"><span></span><span></span><span></span></div>
+    <div class="grid-overlay"></div>
+    <div id="scroll-progress"></div>
+
     <div id="cursor"></div>
     <div id="cursor-follower"></div>
 
@@ -144,6 +194,7 @@
         <div class="container nav-content">
             <a href="#" class="logo">M. MIRZAD</a>
             <div class="nav-links">
+                <a href="#interests">Interests</a>
                 <a href="#experience">Experience</a>
                 <a href="#research">Research</a>
                 <a href="#education">Education</a>
@@ -156,13 +207,24 @@
     <header class="hero">
         <div class="container hero-grid">
             <div data-aos="fade-right">
-                <h1 class="hero-title">MEHDI<br><span class="stroke-text">MIRZAD</span></h1>
-                <p style="color: var(--text-dim); font-size: 1.2rem; margin-bottom: 30px; max-width: 500px;">
-                    Senior Software Developer & MBA Strategist focused on engineering systems and AI optimization.
+                <div class="eyebrow"><span class="dot"></span> Available for New Opportunities</div>
+                <h1 class="hero-title">MAHDI<br><span class="gradient-text">MIRZAD</span></h1>
+                <p style="color: var(--text-dim); font-size: 1.2rem; margin-bottom: 10px; max-width: 500px;">
+                    Software Developer &amp; AI Researcher — building systems at the intersection of engineering, optimization, and intelligent software.
                 </p>
-                <div style="display: flex; gap: 15px;">
+                <div class="interest-tags">
+                    <span class="interest-tag">Software Development &amp; System Design</span>
+                    <span class="interest-tag">Artificial Intelligence</span>
+                    <span class="interest-tag">Optimization Algorithms</span>
+                </div>
+                <div style="display: flex; gap: 15px; margin-top: 35px;">
                     <a href="cv.pdf" download style="background: #fff; color: #000; padding: 15px 30px; border-radius: 12px; text-decoration: none; font-weight: 800; font-size: 0.8rem;">DOWNLOAD CV</a>
                     <a href="mailto:M.mirzad74@gmail.com" style="border: 1px solid #fff; color: #fff; padding: 15px 30px; border-radius: 12px; text-decoration: none; font-weight: 800; font-size: 0.8rem;">GET IN TOUCH</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat"><div class="num">6+ yrs</div><div class="label">Freelance Development</div></div>
+                    <div class="hero-stat"><div class="num">1</div><div class="label">Published Paper</div></div>
+                    <div class="hero-stat"><div class="num">MBA</div><div class="label">+ Chem. Eng.</div></div>
                 </div>
             </div>
             <div class="profile-frame" data-aos="fade-left">
@@ -170,6 +232,15 @@
             </div>
         </div>
     </header>
+
+    <section id="interests" class="container">
+        <h2 class="section-title" data-aos="fade-up">Research Interests</h2>
+        <div class="tag-container" data-aos="fade-up">
+            <span class="tag"><i class="fas fa-diagram-project" style="margin-right: 8px; color: var(--accent-blue);"></i>Software Development &amp; System Design</span>
+            <span class="tag"><i class="fas fa-brain" style="margin-right: 8px; color: var(--accent-blue);"></i>Artificial Intelligence</span>
+            <span class="tag"><i class="fas fa-chart-line" style="margin-right: 8px; color: var(--accent-blue);"></i>Optimization Algorithms &amp; AI Systems</span>
+        </div>
+    </section>
 
     <section id="education" class="container">
         <h2 class="section-title" data-aos="fade-up">Education</h2>
@@ -209,11 +280,16 @@
                 <span class="date-tag">2018 – Present</span>
             </div>
             <ul class="bullet-list">
-                <li>Developed web-based applications using React and modern JavaScript frameworks</li>
-                <li>Implemented data processing and analysis solutions using Python and MATLAB</li>
-                <li>Designed and optimized engineering simulations using Aspen HYSYS and Aspen Plus</li>
-                <li>Built automation scripts and problem-solving tools tailored to client needs</li>
-                <li>Collaborated with clients to gather requirements and deliver customized technical solutions</li>
+                <li>Designed and developed responsive, user-friendly web applications using React, JavaScript, and HTML</li>
+                <li>Built reusable UI components and modern front-end architecture to improve maintainability and scalability</li>
+                <li>Integrated RESTful APIs and managed client-side state for dynamic, data-driven applications</li>
+                <li>Developed interactive dashboards and data visualization interfaces using JavaScript and Python-based backend services</li>
+                <li>Optimized application performance through code splitting, lazy loading, and efficient state management</li>
+                <li>Created cross-browser and mobile-responsive interfaces following modern UI/UX best practices</li>
+                <li>Collaborated directly with clients to translate business needs into technical solutions and deliver on schedule</li>
+                <li>Developed backend services and automation tools in Python, integrating web apps with data-processing workflows</li>
+                <li>Applied engineering software such as MATLAB, Aspen HYSYS, and Aspen Plus for specialized technical solutions</li>
+                <li>Provided ongoing maintenance, feature enhancements, bug fixes, and technical support for deployed applications</li>
             </ul>
         </div>
     </section>
@@ -238,6 +314,12 @@
                 <span class="tag">Adobe Premiere</span><span class="tag">Photoshop</span><span class="tag">After Effects</span>
             </div>
         </div>
+        <div class="fancy-card" data-aos="fade-up">
+            <h4 style="margin-bottom: 15px;"><i class="fas fa-chart-simple" style="margin-right: 10px; color: var(--accent-blue);"></i> Data &amp; Office Productivity</h4>
+            <div class="tag-container">
+                <span class="tag">Excel</span><span class="tag">Word</span><span class="tag">PowerPoint</span>
+            </div>
+        </div>
     </section>
 
     <section id="languages" class="container">
@@ -252,10 +334,11 @@
         <h2 class="section-title" data-aos="fade-up">Awards</h2>
         <div class="fancy-card" data-aos="fade-up">
             <ul class="bullet-list">
-                <li>Ranked 625 in National University Entrance Exam (Region 2)</li>
-                <li>Certificate in Aspen HYSYS & Plus Workshops (University of Tehran)</li>
-                <li>Certificate in Photoshop Workshop (University of Tehran)</li>
-                <li>National Chemistry & Mathematics Olympiad (First Stage Pass)</li>
+                <li>Ranked 625 in the National University Entrance Exam, Mathematics & Physics (Region 2)</li>
+                <li>Certificate of Participation in Aspen HYSYS Workshop, University of Tehran</li>
+                <li>Certificate of Participation in Aspen Plus Workshop, University of Tehran</li>
+                <li>Certificate of Participation in Photoshop Workshop, University of Tehran</li>
+                <li>Passed the First Stage of the National Chemistry & Mathematics Olympiad</li>
             </ul>
         </div>
     </section>
@@ -269,13 +352,15 @@
                         Engineering the future through code, strategy, and chemical simulation expertise.
                     </p>
                     <div class="social-links">
-                        <a href="#" class="social-circle"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="social-circle"><i class="fab fa-github"></i></a>
-                        <a href="#" class="social-circle"><i class="fab fa-google-scholar"></i></a>
+                        <a href="http://www.linkedin.com/in/mehdi-mirzad-669500214" class="social-circle" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://github.com/MMirzad" class="social-circle" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="https://scholar.google.com/citations?user=XmgKjlUAAAAJ&hl=en&authuser=3" class="social-circle" target="_blank"><i class="fab fa-google-scholar"></i></a>
+                        <a href="https://mmirzad.github.io/MehdiMirzad/" class="social-circle" target="_blank"><i class="fas fa-globe"></i></a>
                     </div>
                 </div>
                 <div>
                     <h4 style="margin-bottom: 20px;">Quick Links</h4>
+                    <a href="#interests" class="footer-link">Interests</a>
                     <a href="#experience" class="footer-link">Experience</a>
                     <a href="#research" class="footer-link">Research</a>
                     <a href="#education" class="footer-link">Education</a>
@@ -296,6 +381,15 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ duration: 1000, once: true });
+
+        // Scroll progress bar
+        const progressBar = document.getElementById('scroll-progress');
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            progressBar.style.width = pct + '%';
+        });
 
         // Custom Cursor Logic
         const cursor = document.getElementById('cursor');
@@ -323,5 +417,4 @@
         });
     </script>
 </body>
-
 </html>
